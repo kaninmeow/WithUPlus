@@ -1,0 +1,26 @@
+mybatis:
+  #mapper????
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.withu.entity
+  configuration:
+    #??????
+    map-underscore-to-camel-case: true
+withu:
+  jwt:
+    # ??jwt??????????
+    admin-secret-key: kanin
+    # ??jwt????
+    admin-ttl: 7200000000000000000
+    # ?????????????
+    admin-token-name: token
+    #?????JWT
+    user-secret-key: kanin
+    user-ttl: 7200000000000000000
+    user-token-name: authentication
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/withuplus?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+
