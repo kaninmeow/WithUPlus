@@ -1,6 +1,7 @@
 package com.withu.controller.user;
 
 
+import com.withu.annotation.IgnoreAuth;
 import com.withu.pojo.dto.UserLoginDto;
 import com.withu.pojo.entity.User;
 import com.withu.pojo.vo.UserLoginVo;
@@ -42,6 +43,7 @@ public class UserController {
      */
     @PostMapping("/login")
     @ApiOperation("员工登录")
+    @IgnoreAuth
     public Result<UserLoginVo> login(@RequestBody UserLoginDto userLoginDTO) {
         log.info("员工登录：{}", userLoginDTO);
 

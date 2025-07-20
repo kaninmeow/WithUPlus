@@ -1,9 +1,11 @@
 package com.withu.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.withu.mapper.UserMapper;
 import com.withu.pojo.dto.UserLoginDto;
 import com.withu.pojo.entity.User;
 import com.withu.service.UserService;
+import com.withu.utils.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,7 @@ import org.springframework.util.DigestUtils;
 
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl  implements UserService {
     @Autowired
     private UserMapper userMapper;
 
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
             //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
             if (user == null) {
                 //账号不存在
-                throw new RuntimeException("账号不存在，请注册");
+                throw new BusinessException("账号不存在，请注册");
             }
 
             //密码比对
@@ -38,9 +40,8 @@ public class UserServiceImpl implements UserService {
             password = DigestUtils.md5DigestAsHex(password.getBytes());
             if (!password.equals(user.getPassword())) {
                 //密码错误
-                throw new RuntimeException("密码错误请重新尝试");
+                throw new BusinessException("密码错误请重新尝试");
             }
-
             //3、返回实体对象
             return user;
 
