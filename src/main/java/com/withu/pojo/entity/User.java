@@ -29,4 +29,5 @@ public class User implements Serializable {
 
     private Long type;
 
+    private String avatar;
 }
