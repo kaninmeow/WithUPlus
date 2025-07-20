@@ -22,6 +22,6 @@ public class UserLoginDto implements Serializable {
     private String password;
 
     @ApiModelProperty("用户类型")
-    private Long type;
+    private Integer type;
 
 }

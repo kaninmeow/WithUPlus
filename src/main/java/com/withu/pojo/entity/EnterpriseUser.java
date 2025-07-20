@@ -32,8 +32,8 @@ public class EnterpriseUser implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "企业名称")
-    private String enterpriseName;
+    @ApiModelProperty(value = "企业账号")
+    private String username;
 
     @ApiModelProperty(value = "电话")
     private String phone;
@@ -41,8 +41,11 @@ public class EnterpriseUser implements Serializable {
     @ApiModelProperty(value = "密码（加密存储）")
     private String password;
 
+    @ApiModelProperty(value = "企业名称")
+    private String name;
+
     @ApiModelProperty(value = "统一社会信用代码")
-    private String enterpriseCode;
+    private String idNumber;
 
     @ApiModelProperty(value = "头像URL")
     private String avatar;

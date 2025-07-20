@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 public class User implements Serializable {
 
-    private Long id;
+    private Integer id;
 
     private String username;
 
@@ -23,11 +23,11 @@ public class User implements Serializable {
 
     private String phone;
 
-    private Long sex;
+    private Integer sex;
 
     private String idNumber;
 
-    private Long type;
+    private Integer type;
 
     private String avatar;
 }
