@@ -1,5 +1,6 @@
 package com.withu.config;
 
+import com.withu.properties.JwtProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,10 +34,15 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .build();
         return docket;
     }
+
+    @Bean
+    public AuthorizationInterceptor jwtInterceptor(JwtProperties jwtProperties) {
+        return new AuthorizationInterceptor(jwtProperties);
+    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 可添加多个
-        registry.addInterceptor(new AuthorizationInterceptor()).addPathPatterns("/**");;
+        registry.addInterceptor(jwtInterceptor(null)).addPathPatterns("/**");;
     }
     /**
      * 设置静态资源映射

@@ -41,8 +41,11 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             "Accept", "authorization", LOGIN_TOKEN_KEY
     };
 
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
+
+    public AuthorizationInterceptor(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -111,7 +114,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
     private boolean validateToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = extractToken(request);
-
         if (token == null || token.isEmpty()) {
             sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "缺少Token");
             return false;
