@@ -107,6 +107,7 @@ public class UserController {
         if (service.getOne(new QueryWrapper<T>().eq("username", user.getUsername())) != null) {
             return Result.error("该用户名已被注册");
         }
+
         T targetUser = supplier.get();
         BeanUtils.copyProperties(user, targetUser);
         service.save(targetUser);
