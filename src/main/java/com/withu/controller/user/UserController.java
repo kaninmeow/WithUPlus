@@ -87,9 +87,6 @@ public class UserController {
     @IgnoreAuth
     public Result register(@RequestBody User user) {
         log.info("员工注册：{}", user);
-        if (user.getType() < 0 || user.getType() > 2) {
-            return Result.error("用户类型错误");
-        }
         switch (user.getType()) {
             case 0:
                 return registerUser(user, iConsumerUserService, ConsumerUser.class, () -> new ConsumerUser());
