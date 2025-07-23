@@ -9,6 +9,7 @@ import com.withu.pojo.entity.ConsumerUser;
 import com.withu.pojo.entity.EnterpriseUser;
 import com.withu.pojo.entity.User;
 import com.withu.pojo.entity.VolunteerUser;
+import com.withu.pojo.vo.EnterpriseUserVo;
 import com.withu.pojo.vo.UserLoginVo;
 import com.withu.properties.JwtProperties;
 import com.withu.result.Result;
@@ -16,6 +17,7 @@ import com.withu.service.IConsumerUserService;
 import com.withu.service.IEnterpriseUserService;
 import com.withu.service.IVolunteerUserService;
 import com.withu.service.UserService;
+import com.withu.utils.BusinessException;
 import com.withu.utils.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,25 +65,54 @@ public class UserController {
     public Result<UserLoginVo> login(@RequestBody UserLoginDto userLoginDTO) {
         log.info("员工登录：{}", userLoginDTO);
 
-        User user = userService.login(userLoginDTO);
+        if (userLoginDTO.getType() == 0 || userLoginDTO.getType() == 1) {
+            User user = userService.login(userLoginDTO);
 
-        //登录成功后，生成jwt令牌
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
-        String token = JwtUtil.createJWT(
-                jwtProperties.getAdminSecretKey(),
-                jwtProperties.getAdminTtl(),
-                claims);
+            //登录成功后，生成jwt令牌
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", user.getId());
+            String token = JwtUtil.createJWT(
+                    jwtProperties.getAdminSecretKey(),
+                    jwtProperties.getAdminTtl(),
+                    claims);
 
-        UserLoginVo userLoginVo = UserLoginVo.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .name(user.getName())
-                .token(token)
-                .build();
+            UserLoginVo userLoginVo = UserLoginVo.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .name(user.getName())
+                    .token(token)
+                    .build();
 
-        return Result.success("登录成功",userLoginVo);
+            return Result.success("登录成功",userLoginVo);
+        } else if (userLoginDTO.getType() == 2) {
+            //企业用户登录
+            EnterpriseUser enterpriseUser = userService.enterpriseUserlogin(userLoginDTO);
+            //登录成功后，生成jwt令牌
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", enterpriseUser.getId());
+            String token = JwtUtil.createJWT(
+                    jwtProperties.getAdminSecretKey(),
+                    jwtProperties.getAdminTtl(),
+                    claims);
+
+            UserLoginVo userLoginVo = UserLoginVo.builder()
+                    .id(enterpriseUser.getId().intValue())
+                    .username(enterpriseUser.getUsername())
+                    .name(enterpriseUser.getName())
+                    .token(token)
+                    .build();
+
+            return Result.success("登录成功",userLoginVo);
+        } else {
+            throw new BusinessException("用户类型错误");
+        }
     }
+
+    /**
+     * 注册
+     * @param user
+     * @return
+     */
     @PostMapping("/register")
     @ApiOperation("员工注册")
     @IgnoreAuth

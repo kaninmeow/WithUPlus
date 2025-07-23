@@ -1,5 +1,6 @@
 package com.withu.mapper;
 
+import com.withu.pojo.entity.EnterpriseUser;
 import com.withu.pojo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -13,4 +14,10 @@ public interface UserMapper {
      */
     @Select("select * from consumer_user where username = #{username}")
     User getConsumerByUsername(String username);
+
+    @Select("select * from withuplus.volunteer_users where username = #{username}")
+    User getvolunteerByUsername(String username);
+
+    @Select("select * from enterprise_users where username = #{username}")
+    EnterpriseUser getEnterpriseByUsername(String username);
 }
