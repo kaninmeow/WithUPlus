@@ -55,5 +55,8 @@ public class Elder implements Serializable {
     @ApiModelProperty(value = "过敏史")
     private String allergyHistory;
 
+    @ApiModelProperty("头像")
+    private String avatar;
+
 
 }

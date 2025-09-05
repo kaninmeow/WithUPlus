@@ -8,4 +8,6 @@ public interface UserService {
     public User login(UserLoginDto userLoginDTO);
 
     EnterpriseUser enterpriseUserlogin(UserLoginDto userLoginDTO);
+
+    void changePassword(User user);
 }

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 
 /**
  * 权限(Token)验证拦截器
@@ -101,7 +102,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         return RequestMethod.OPTIONS.name().equals(request.getMethod());
     }
 
-    private boolean shouldSkipAuth(Object handler) {
+    private boolean  shouldSkipAuth(Object handler) {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
@@ -176,5 +177,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             out.write(jsonResponse);
             out.flush();
         }
+
     }
 }

@@ -1,7 +1,10 @@
 package com.withu.service;
 
+import com.withu.pojo.entity.Order;
 import com.withu.pojo.entity.VolunteerUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IVolunteerUserService extends IService<VolunteerUser> {
 
+    List<Order> getAllOrder();
 }

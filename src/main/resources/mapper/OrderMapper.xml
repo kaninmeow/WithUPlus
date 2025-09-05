@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.withu.mapper.OrderMapper">
+
+    <insert id="saveOrder">
+        INSERT INTO order (elder_id, service_type, service_description, start_time, end_time, is_volunteer_payment, volunteer_payment_amount, volunteer_payment_status, volunteer_payment_time, payment_proof, service_fee, advanced_payment_amount, payment_type, status, create_time, consumer_id) VALUES (#{elderId}, #{serviceType}, #{serviceDescription}, #{startTime}, #{endTime}, #{isVolunteerPayment}, #{volunteerPaymentAmount}, #{volunteerPaymentStatus}, #{volunteerPaymentTime}, #{paymentProof}, #{serviceFee}, #{advancedPaymentAmount}, #{paymentType}, #{status}, #{createTime}, #{consumerId})
+    </insert>
+</mapper>

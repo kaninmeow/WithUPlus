@@ -24,7 +24,7 @@ public class UserServiceImpl  implements UserService {
      * @return
      */
     public User login(UserLoginDto userLoginDTO) {
-        //志愿者用户登录
+        //普通用户登录
         String username = userLoginDTO.getUsername();
         String password = userLoginDTO.getPassword();
         //判断用户类型
@@ -47,7 +47,7 @@ public class UserServiceImpl  implements UserService {
             return user;
 
         } else if (userLoginDTO.getType() == 1) {
-            //普通用户登录
+            //志愿者用户登录
             User user = userMapper.getvolunteerByUsername(username);
             if (user == null) {
                 //账号不存在
@@ -85,5 +85,18 @@ public class UserServiceImpl  implements UserService {
             throw new BusinessException("密码错误请重新尝试");
         }
         return enterpriseUser;
+    }
+
+    @Override
+    public void changePassword(User user) {
+        String password = user.getPassword();
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        User user1 = userMapper.getConsumerByUsername(user.getUsername());
+        if (password.equals(user1.getPassword())) {
+            user1.setPassword(password);
+            userMapper.updatePasswordById(user1);
+        } else {
+            throw new BusinessException("原密码错误");
+        }
     }
 }

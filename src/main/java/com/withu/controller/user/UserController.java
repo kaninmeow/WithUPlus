@@ -144,4 +144,14 @@ public class UserController {
         service.save(targetUser);
         return Result.success("注册成功");
     }
+
+    /**
+     * 密码修改
+     * @param user
+     * @return
+     */
+    public Result changePassword(@RequestBody User user, String password) {
+        userService.changePassword(user);
+        return Result.success("修改成功");
+    }
 }

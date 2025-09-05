@@ -4,6 +4,7 @@ import com.withu.pojo.entity.EnterpriseUser;
 import com.withu.pojo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
@@ -20,4 +21,7 @@ public interface UserMapper {
 
     @Select("select * from enterprise_users where username = #{username}")
     EnterpriseUser getEnterpriseByUsername(String username);
+
+    @Update("update consumer_user set password = #{password} where username = #{username}")
+    void updatePasswordById(User user1);
 }
