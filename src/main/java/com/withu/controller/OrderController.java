@@ -32,7 +32,7 @@ public class OrderController {
     @PostMapping("createOrder")
     @ApiOperation("创建订单")
     @IgnoreAuth
-    public Result createOrder(@RequestBody Order order) {
+    public Result<String> createOrder(@RequestBody Order order) {
         log.info("创建订单：{}",order);
         if(iOrderService.saveOrder(order)){
             return Result.success("创建成功");
@@ -48,7 +48,7 @@ public class OrderController {
     @PutMapping("cancelOrder")
     @ApiOperation("取消订单")
     @IgnoreAuth
-    public Result cancelOrder(@PathVariable Long id) {
+    public Result<String>      cancelOrder(@PathVariable Long id) {
         log.info("取消订单：{}",id);
         if(iOrderService.cancelOrder(id)){
             return Result.success("取消成功");
@@ -67,5 +67,28 @@ public class OrderController {
     public Result<Order> findOrderById(@PathVariable Long id) {
         log.info("根据id获取Id详细信息：{}",id);
         return Result.success("查询成功", iOrderService.findOrderById(id));
+    }
+
+    /**
+     * 志愿者抢单
+     * @param orderId 订单ID
+     * @param volunteerUserId 志愿者用户ID
+     * @return
+     */
+    @PostMapping("grabOrder")
+    @ApiOperation("志愿者抢单")
+    @IgnoreAuth
+    public Result<String> grabOrder(@RequestParam Long orderId, @RequestParam Long volunteerUserId) {
+        log.info("志愿者抢单：订单ID={}, 志愿者ID={}", orderId, volunteerUserId);
+        try {
+            if (iOrderService.grabOrder(orderId, volunteerUserId)) {
+                return Result.success("抢单成功");
+            } else {
+                return Result.error("抢单失败");
+            }
+        } catch (Exception e) {
+            log.error("抢单异常：{}", e.getMessage());
+            return Result.error(e.getMessage());
+        }
     }
 }

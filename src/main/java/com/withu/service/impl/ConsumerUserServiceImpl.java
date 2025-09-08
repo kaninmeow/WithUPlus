@@ -10,9 +10,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.withu.utils.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import com.withu.mapper.OrderMapper;
 
 /**
  *
@@ -26,6 +26,10 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
 
     @Autowired
     private ConsumerUserMapper consumerUserMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
     @Override
     public boolean relevantToTheElderly(Elder elder) {
         if (elder == null) {
@@ -90,5 +94,63 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
         }
         removeAddressById(address.getId());
         return saveAddress(address);
+    }
+
+    @Override
+    public List<Order> getPendingOrdersByConsumer(Long consumerUserId) {
+        if (consumerUserId == null) {
+            throw new BusinessException("用户ID不能为空");
+        }
+        // 待接单状态：0
+        return orderMapper.getPendingOrdersByConsumer(consumerUserId);
+    }
+
+    @Override
+    public List<Order> getReviewingOrdersByConsumer(Long consumerUserId) {
+        if (consumerUserId == null) {
+            throw new BusinessException("用户ID不能为空");
+        }
+        // 审核中状态：4（见 sql.sql）
+        return orderMapper.getReviewingOrdersByConsumer(consumerUserId);
+    }
+
+    @Override
+    public List<Order> getInProgressOrdersByConsumer(Long consumerUserId) {
+        if (consumerUserId == null) {
+            throw new BusinessException("用户ID不能为空");
+        }
+        // 进行中状态：1
+        return orderMapper.getInProgressOrdersByConsumer(consumerUserId);
+    }
+
+    @Override
+    public List<Order> getCompletedOrdersByConsumer(Long consumerUserId) {
+        // 已完成状态：3（见 sql.sql）
+        return orderMapper.getCompletedOrdersByConsumer(consumerUserId);
+    }
+
+    @Override
+    public Elder getElderById(Long elderId) {
+        if (elderId == null) {
+            throw new BusinessException("老人ID不能为空");
+        }
+        Elder elder = consumerUserMapper.findElderById(elderId);
+        if (elder == null) {
+            throw new BusinessException("老人信息不存在");
+        }
+        return elder;
+    }
+
+    @Override
+    public boolean deleteElderById(Long elderId) {
+        if (elderId == null) {
+            throw new BusinessException("老人ID不能为空");
+        }
+        // 先检查老人是否存在
+        Elder elder = consumerUserMapper.findElderById(elderId);
+        if (elder == null) {
+            throw new BusinessException("老人信息不存在");
+        }
+        return consumerUserMapper.deleteElderById(elderId);
     }
 }

@@ -12,9 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 志愿者用户表
- * </p>
  *
  * @author 
  * @since 2025-07-20

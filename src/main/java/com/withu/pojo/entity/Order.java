@@ -17,6 +17,7 @@ public class Order {
     private Long id;
     private Long elderId;
     private Long consumerUserId;
+    private Long volunteerUserId;
     private String serviceType;
     private String serviceDescription;
     private Date startTime;

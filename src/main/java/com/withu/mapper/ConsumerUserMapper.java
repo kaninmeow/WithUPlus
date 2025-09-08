@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.withu.pojo.entity.Elder;
 import com.withu.pojo.entity.Order;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -46,5 +44,10 @@ public interface ConsumerUserMapper extends BaseMapper<ConsumerUser> {
     @Delete("delete from address where id = #{id}")
     boolean deleteAddressById(Long id);
 
+    @Select("select * from elder where id = #{id}")
+    Elder findElderById(Long id);
+
+    @Delete("delete from elder where id = #{id}")
+    boolean deleteElderById(Long id);
 
 }
