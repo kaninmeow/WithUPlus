@@ -153,4 +153,29 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
         }
         return consumerUserMapper.deleteElderById(elderId);
     }
+
+    @Override
+    public boolean updateElderById(Elder elder) {
+        if (elder == null) {
+            throw new BusinessException("老人信息不能为空");
+        }
+        if (elder.getId() == null) {
+            throw new BusinessException("老人ID不能为空");
+        }
+        // 先检查老人是否存在
+        Elder existingElder = consumerUserMapper.findElderById(elder.getId());
+        if (existingElder == null) {
+            throw new BusinessException("老人信息不存在");
+        }
+        return consumerUserMapper.updateElderById(elder);
+    }
+
+    @Override
+    public String getVolunteerPhoneByOrderId(Long orderId) {
+        String phone = consumerUserMapper.getVolunteerPhoneByOrderId(orderId);
+        if (phone == null || phone.trim().isEmpty()) {
+            throw new BusinessException("该订单暂无志愿者接单或志愿者信息不存在");
+        }
+        return phone;
+    }
 }

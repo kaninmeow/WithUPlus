@@ -7,6 +7,7 @@ import com.withu.pojo.entity.Elder;
 import com.withu.pojo.entity.Order;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -49,5 +50,11 @@ public interface ConsumerUserMapper extends BaseMapper<ConsumerUser> {
 
     @Delete("delete from elder where id = #{id}")
     boolean deleteElderById(Long id);
+
+    @Update("update elder set consumer_id = #{consumerId}, name = #{name}, relation = #{relation}, age = #{age}, phone = #{phone}, address = #{address}, blood_type = #{bloodType}, allergy_history = #{allergyHistory}, avatar = #{avatar} where id = #{id}")
+    boolean updateElderById(Elder elder);
+
+    @Select("select v.phone from volunteer_users v inner join `order` o on v.id = o.volunteer_user_id where o.id = #{orderId}")
+    String getVolunteerPhoneByOrderId(Long orderId);
 
 }

@@ -75,4 +75,18 @@ public interface IConsumerUserService extends IService<ConsumerUser> {
      * @return 删除结果
      */
     boolean deleteElderById(Long elderId);
+
+    /**
+     * 更新老人信息
+     * @param elder 老人信息
+     * @return 更新结果
+     */
+    boolean updateElderById(Elder elder);
+
+    /**
+     * 根据订单ID获取志愿者电话
+     * @param orderId 订单ID
+     * @return 志愿者电话
+     */
+    String getVolunteerPhoneByOrderId(Long orderId);
 }

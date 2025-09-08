@@ -209,4 +209,32 @@ public class ConsumerUserController {
         }
     }
 
+    /**
+     * 更新老人信息
+     * @param elder 老人信息
+     * @return 更新结果
+     */
+    @PutMapping("updateElderById")
+    @ApiOperation("更新老人信息")
+    public Result<String> updateElderById(@RequestBody Elder elder) {
+        log.info("更新老人信息：{}", elder);
+        if (iConsumerUserService.updateElderById(elder)) {
+            return Result.success("更新成功");
+        } else {
+            return Result.error("更新失败");
+        }
+    }
+
+    /**
+     * 根据订单ID获取志愿者电话
+     * @param orderId 订单ID
+     * @return 志愿者电话
+     */
+    @GetMapping("getVolunteerPhoneByOrderId/{orderId}")
+    @ApiOperation("根据订单ID获取志愿者电话")
+    public Result<String> getVolunteerPhoneByOrderId(@PathVariable Long orderId) {
+        log.info("根据订单ID获取志愿者电话：{}", orderId);
+        return Result.success("获取成功", iConsumerUserService.getVolunteerPhoneByOrderId(orderId));
+    }
+
 }
