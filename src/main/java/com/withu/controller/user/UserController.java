@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.withu.annotation.IgnoreAuth;
 import com.withu.pojo.dto.UserLoginDto;
 import com.withu.pojo.entity.ConsumerUser;
-import com.withu.pojo.entity.EnterpriseUser;
+import com.withu.pojo.entity.AdminUser;
 import com.withu.pojo.entity.User;
 import com.withu.pojo.entity.VolunteerUser;
 import com.withu.pojo.vo.EnterpriseUserVo;
@@ -65,7 +65,7 @@ public class UserController {
     public Result<UserLoginVo> login(@RequestBody UserLoginDto userLoginDTO) {
         log.info("员工登录：{}", userLoginDTO);
 
-        if (userLoginDTO.getType() == 0 || userLoginDTO.getType() == 1) {
+        if (userLoginDTO.getType() == 0 || userLoginDTO.getType() == 1 || userLoginDTO.getType() == 2) {
             User user = userService.login(userLoginDTO);
 
             //登录成功后，生成jwt令牌
@@ -84,26 +84,7 @@ public class UserController {
                     .build();
 
             return Result.success("登录成功",userLoginVo);
-        } else if (userLoginDTO.getType() == 2) {
-            //企业用户登录
-            EnterpriseUser enterpriseUser = userService.enterpriseUserlogin(userLoginDTO);
-            //登录成功后，生成jwt令牌
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("id", enterpriseUser.getId());
-            String token = JwtUtil.createJWT(
-                    jwtProperties.getAdminSecretKey(),
-                    jwtProperties.getAdminTtl(),
-                    claims);
-
-            UserLoginVo userLoginVo = UserLoginVo.builder()
-                    .id(enterpriseUser.getId().intValue())
-                    .username(enterpriseUser.getUsername())
-                    .name(enterpriseUser.getName())
-                    .token(token)
-                    .build();
-
-            return Result.success("登录成功",userLoginVo);
-        } else {
+        }else {
             throw new BusinessException("用户类型错误");
         }
     }
@@ -122,8 +103,6 @@ public class UserController {
             case 0:
                 return registerUser(user, iConsumerUserService, ConsumerUser.class, () -> new ConsumerUser());
             case 1:
-                return registerUser(user, iEnterpriseUserService, EnterpriseUser.class, () -> new EnterpriseUser());
-            case 2:
                 return registerUser(user, iVolunteerUserService, VolunteerUser.class, () -> new VolunteerUser());
             default:
                 return Result.error("用户类型错误");

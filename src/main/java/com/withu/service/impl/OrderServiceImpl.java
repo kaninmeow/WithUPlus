@@ -3,6 +3,7 @@ package com.withu.service.impl;
 import com.withu.mapper.OrderMapper;
 import com.withu.pojo.entity.Order;
 import com.withu.service.IOrderService;
+import com.withu.constant.OrderStatusConstant;
 import com.withu.utils.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public boolean cancelOrder(Long id) {
         Integer status = findOrderById(id).getStatus();
-        if (status == 2 || status == -1) {
+        if (status == OrderStatusConstant.TO_BE_REVIEWED || status == OrderStatusConstant.CANCELED) {
             throw new BusinessException("订单状态错误,不可取消");
         }
         orderMapper.cancelOrder(id);
@@ -47,7 +48,7 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         // 检查订单状态是否为待接单状态（0）
-        if (order.getStatus() != 0) {
+        if (order.getStatus() != OrderStatusConstant.PENDING) {
             throw new BusinessException("订单状态错误，无法抢单");
         }
 

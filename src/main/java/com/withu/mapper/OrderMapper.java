@@ -1,6 +1,7 @@
 package com.withu.mapper;
 
 import com.withu.pojo.entity.Order;
+import com.withu.constant.OrderStatusConstant;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -13,7 +14,7 @@ public interface OrderMapper {
 
     void saveOrder(Order order);
 
-    @Update("update `order` set status = -1 where id = #{id}")
+    @Update("update `order` set status = " + OrderStatusConstant.CANCELED + " where id = #{id}")
     void cancelOrder(Long id);
 
     @Select("select * from `order` where id = #{id}")
@@ -23,7 +24,7 @@ public interface OrderMapper {
      * 获取所有可接受订单
      * @return
      */
-    @Select("select * from `order` where status = 0")
+    @Select("select * from `order` where status = " + OrderStatusConstant.PENDING)
     List<Order> getAllOrder();
 
     /**
@@ -32,7 +33,7 @@ public interface OrderMapper {
      * @param volunteerUserId 志愿者用户ID
      * @return 影响行数
      */
-    @Update("update `order` set volunteer_user_id = #{volunteerUserId}, status = 1 where id = #{orderId} and status = 0")
+    @Update("update `order` set volunteer_user_id = #{volunteerUserId}, status = " + OrderStatusConstant.IN_PROGRESS + " where id = #{orderId} and status = " + OrderStatusConstant.PENDING)
     int grabOrder(Long orderId, Long volunteerUserId);
 
     /**
@@ -59,7 +60,7 @@ public interface OrderMapper {
      * @param volunteerUserId 志愿者用户ID
      * @return 影响行数
      */
-    @Update("update `order` set status = 2 where id = #{orderId} and volunteer_user_id = #{volunteerUserId} and status = 1")
+    @Update("update `order` set status = " + OrderStatusConstant.TO_BE_REVIEWED + " where id = #{orderId} and volunteer_user_id = #{volunteerUserId} and status = " + OrderStatusConstant.IN_PROGRESS)
     int completeOrder(Long orderId, Long volunteerUserId);
 
     /**
@@ -67,7 +68,7 @@ public interface OrderMapper {
      * @param volunteerUserId 志愿者用户ID
      * @return 完成的订单列表
      */
-    @Select("select * from `order` where volunteer_user_id = #{volunteerUserId} and status = 2")
+    @Select("select * from `order` where volunteer_user_id = #{volunteerUserId} and status = " + OrderStatusConstant.TO_BE_REVIEWED)
     List<Order> getCompletedOrdersByVolunteer(Long volunteerUserId);
 
     /**
@@ -75,7 +76,7 @@ public interface OrderMapper {
      * @param volunteerUserId 志愿者用户ID
      * @return 进行中的订单列表
      */
-    @Select("select * from `order` where volunteer_user_id = #{volunteerUserId} and status = 1")
+    @Select("select * from `order` where volunteer_user_id = #{volunteerUserId} and status = " + OrderStatusConstant.IN_PROGRESS)
     List<Order> getInProgressOrdersByVolunteer(Long volunteerUserId);
 
     /**
@@ -84,7 +85,7 @@ public interface OrderMapper {
      * @param volunteerUserId 志愿者用户ID
      * @return 影响行数
      */
-    @Update("update `order` set volunteer_user_id = null, status = 0 where id = #{orderId} and volunteer_user_id = #{volunteerUserId} and status = 1")
+    @Update("update `order` set volunteer_user_id = null, status = " + OrderStatusConstant.PENDING + " where id = #{orderId} and volunteer_user_id = #{volunteerUserId} and status = " + OrderStatusConstant.IN_PROGRESS)
     int cancelOrderByVolunteer(Long orderId, Long volunteerUserId);
 
     /**
@@ -92,7 +93,7 @@ public interface OrderMapper {
      * @param consumerUserId 普通消费者用户ID
      * @return 待接单订单列表
      */
-    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = 0")
+    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = " + OrderStatusConstant.PENDING)
     List<Order> getPendingOrdersByConsumer(Long consumerUserId);
 
     /**
@@ -100,7 +101,7 @@ public interface OrderMapper {
      * @param consumerUserId 普通消费者用户ID
      * @return 审核中订单列表
      */
-    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = 4")
+    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = " + OrderStatusConstant.UNDER_REVIEW)
     List<Order> getReviewingOrdersByConsumer(Long consumerUserId);
 
     /**
@@ -108,7 +109,7 @@ public interface OrderMapper {
      * @param consumerUserId 普通消费者用户ID
      * @return 进行中订单列表
      */
-    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = 1")
+    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = " + OrderStatusConstant.IN_PROGRESS)
     List<Order> getInProgressOrdersByConsumer(Long consumerUserId);
 
     /**
@@ -116,7 +117,7 @@ public interface OrderMapper {
      * @param consumerUserId 普通消费者用户ID
      * @return 已完成订单列表
      */
-    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = 3")
+    @Select("select * from `order` where consumer_id = #{consumerUserId} and status = " + OrderStatusConstant.COMPLETED)
     List<Order> getCompletedOrdersByConsumer(Long consumerUserId);
 
 }

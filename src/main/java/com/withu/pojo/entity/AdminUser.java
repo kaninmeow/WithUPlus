@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 企业用户表
+ * 管理员用户
  * </p>
  *
  * @author 
@@ -24,7 +24,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("enterprise_user")
 @ApiModel(value="EnterpriseUser对象", description="企业用户表")
-public class EnterpriseUser implements Serializable {
+public class AdminUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
