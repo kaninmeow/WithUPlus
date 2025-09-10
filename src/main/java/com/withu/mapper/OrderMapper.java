@@ -120,4 +120,6 @@ public interface OrderMapper {
     @Select("select * from `order` where consumer_id = #{consumerUserId} and status = " + OrderStatusConstant.COMPLETED)
     List<Order> getCompletedOrdersByConsumer(Long consumerUserId);
 
+    @Update("update `order` set status = #{status} where id = #{id}")
+    void setStatus(Long id, int status);
 }

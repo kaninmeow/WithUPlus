@@ -17,6 +17,9 @@ public final class OrderStatusConstant {
     // 审核中
     public static final int UNDER_REVIEW = 4;
 
+    //审核不通过
+    public static final int REJECTED = 5;
+
     // 取消订单
     public static final int CANCELED = -1;
 }

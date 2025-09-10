@@ -6,15 +6,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.withu.annotation.IgnoreAuth;
 import com.withu.pojo.dto.UserLoginDto;
 import com.withu.pojo.entity.ConsumerUser;
-import com.withu.pojo.entity.AdminUser;
 import com.withu.pojo.entity.User;
 import com.withu.pojo.entity.VolunteerUser;
-import com.withu.pojo.vo.EnterpriseUserVo;
 import com.withu.pojo.vo.UserLoginVo;
 import com.withu.properties.JwtProperties;
 import com.withu.result.Result;
 import com.withu.service.IConsumerUserService;
-import com.withu.service.IEnterpriseUserService;
 import com.withu.service.IVolunteerUserService;
 import com.withu.service.UserService;
 import com.withu.utils.BusinessException;
@@ -45,8 +42,6 @@ public class UserController {
     JwtProperties jwtProperties;
     @Autowired
     IConsumerUserService iConsumerUserService;
-    @Autowired
-    IEnterpriseUserService iEnterpriseUserService;
     @Autowired
     IVolunteerUserService iVolunteerUserService;
     /**
