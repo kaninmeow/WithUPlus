@@ -124,3 +124,41 @@ create table volunteer_users
 )
     comment '志愿者用户表';
 
+-- 课程表
+create table course (
+                        id              bigint auto_increment comment '主键id' primary key,
+                        course_name     varchar(128) not null comment '课程名称',
+                        course_intro    text comment '课程简介',
+                        chapter_cover   varchar(255) comment '章封面',
+                        course_type     varchar(64) comment '课程类型',
+                        course_level    tinyint not null default 1 comment '课程难度系数(1-5)',
+                        course_score    int not null default 0 comment '课程积分值',
+                        course_cover    varchar(255) comment '课程封面',
+                        admin_id        bigint not null comment '管理员id',
+                        create_time     datetime not null default current_timestamp comment '创建时间',
+                        update_time     datetime not null default current_timestamp on update current_timestamp comment '修改时间'
+) comment = '课程表';
+
+-- 课程内容 - 章
+create table course_chapter (
+                                id              bigint auto_increment comment '主键id' primary key,
+                                chapter_order   int not null comment '章顺序(第几章)',
+                                chapter_name    varchar(128) not null comment '章名称',
+                                course_id       bigint not null comment '课程id',
+                                create_time     datetime not null default current_timestamp comment '创建时间',
+                                update_time     datetime not null default current_timestamp on update current_timestamp comment '修改时间',
+                                constraint fk_chapter_course foreign key (course_id) references course (id)
+) comment = '课程内容_章表';
+
+-- 课程内容 - 节
+create table course_section (
+                                id              bigint auto_increment comment '主键id' primary key,
+                                section_order   int not null comment '节顺序(第几节)',
+                                section_name    varchar(128) not null comment '节名称',
+                                video_url       varchar(512) comment '视频链接',
+                                chapter_id      bigint not null comment '章id',
+                                section_cover   varchar(255) comment '节封面',
+                                create_time     datetime not null default current_timestamp comment '创建时间',
+                                update_time     datetime not null default current_timestamp on update current_timestamp comment '修改时间',
+                                constraint fk_section_chapter foreign key (chapter_id) references course_chapter (id)
+) comment = '课程内容_节表';
