@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,14 +28,20 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     @Autowired
     private IChatRoomService chatRoomService;
 
-    // 存储用户ID和WebSocketSession的映射
-    private static final ConcurrentHashMap<Long, WebSocketSession> userSessions = new ConcurrentHashMap<>();
+    // 房间 -> (用户 -> 会话)
+    private static final ConcurrentHashMap<Long, ConcurrentHashMap<Long, WebSocketSession>> roomSessions = new ConcurrentHashMap<>();
     
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info("WebSocket连接建立: {}", session.getId());
+        Long userId = (Long) session.getAttributes().get("userId");
+        Long roomId = (Long) session.getAttributes().get("roomId");
+        log.info("WebSocket连接建立: {}, userId={}, roomId={}", session.getId(), userId, roomId);
+        if (userId != null && roomId != null) {
+            roomSessions.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(userId, session);
+        }
     }
 
     @Override
@@ -83,11 +91,15 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                     messageDTO.getContent()
             );
             
-            // 存储用户会话
-            userSessions.put(messageDTO.getSenderId(), session);
-            
-            // 广播消息给聊天室的其他用户
-            broadcastMessage(messageDTO.getRoomId(), savedMessage, messageDTO.getSenderId());
+            // 确保当前会话已登记到房间
+            Long roomId = messageDTO.getRoomId();
+            Long senderId = messageDTO.getSenderId();
+            if (roomId != null && senderId != null) {
+                roomSessions.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(senderId, session);
+            }
+
+            // 广播消息给同房间其他用户
+            broadcastMessage(roomId, savedMessage, senderId);
             
         } catch (Exception e) {
             log.error("处理聊天消息失败: {}", e.getMessage());
@@ -99,18 +111,22 @@ public class ChatWebSocketHandler implements WebSocketHandler {
      * 广播消息
      */
     private void broadcastMessage(Long roomId, ChatMessageVO message, Long senderId) {
-        // 这里简化处理，实际应该根据roomId找到聊天室的所有用户
-        // 然后发送给除了发送者之外的其他用户
-        userSessions.forEach((userId, session) -> {
-            if (!userId.equals(senderId) && session.isOpen()) {
+        ConcurrentHashMap<Long, WebSocketSession> sessions = roomSessions.get(roomId);
+        if (sessions == null) {
+            return;
+        }
+        for (Map.Entry<Long, WebSocketSession> entry : sessions.entrySet()) {
+            Long userId = entry.getKey();
+            WebSocketSession s = entry.getValue();
+            if (s != null && s.isOpen() && !userId.equals(senderId)) {
                 try {
-                    String messageJson = objectMapper.writeValueAsString(message);
-                    session.sendMessage(new TextMessage(messageJson));
+                    String json = objectMapper.writeValueAsString(message);
+                    s.sendMessage(new TextMessage(json));
                 } catch (IOException e) {
                     log.error("发送消息失败: {}", e.getMessage());
                 }
             }
-        });
+        }
     }
 
     /**
@@ -130,6 +146,16 @@ public class ChatWebSocketHandler implements WebSocketHandler {
      * 移除用户会话
      */
     private void removeUserSession(WebSocketSession session) {
-        userSessions.entrySet().removeIf(entry -> entry.getValue().equals(session));
+        Long roomId = (Long) session.getAttributes().get("roomId");
+        Long userId = (Long) session.getAttributes().get("userId");
+        if (roomId != null && userId != null) {
+            ConcurrentHashMap<Long, WebSocketSession> sessions = roomSessions.get(roomId);
+            if (sessions != null) {
+                sessions.remove(userId);
+                if (sessions.isEmpty()) {
+                    roomSessions.remove(roomId);
+                }
+            }
+        }
     }
 }

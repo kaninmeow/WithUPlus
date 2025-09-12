@@ -1,6 +1,7 @@
 package com.withu.config;
 
 import com.withu.websocket.ChatWebSocketHandler;
+import com.withu.websocket.ChatHandshakeInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +18,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired
     private ChatWebSocketHandler chatWebSocketHandler;
+    @Autowired
+    private ChatHandshakeInterceptor chatHandshakeInterceptor;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatWebSocketHandler, "/chat")
+                .addInterceptors(chatHandshakeInterceptor)
                 .setAllowedOrigins("*");
     }
 }
