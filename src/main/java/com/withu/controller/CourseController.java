@@ -3,6 +3,7 @@ package com.withu.controller;
 import com.withu.pojo.entity.Course;
 import com.withu.pojo.vo.CourseDetailVO;
 import com.withu.pojo.dto.CourseCreateDTO;
+import com.withu.pojo.dto.CourseUpdateDTO;
 import com.withu.result.Result;
 import com.withu.service.ICourseService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,5 +60,14 @@ public class CourseController {
     public Result<String> deleteCourse(@org.springframework.web.bind.annotation.PathVariable("id") Long id) {
         boolean ok = courseService.deleteCourseCascade(id);
         return ok ? Result.success("删除成功") : Result.error("删除失败");
+    }
+
+    /**
+     * 更新课程信息并更新章节
+     */
+    @PutMapping("/update")
+    public Result<String> updateCourse(@org.springframework.web.bind.annotation.RequestBody CourseUpdateDTO courseUpdateDTO) {
+        boolean ok = courseService.updateCourse(courseUpdateDTO);
+        return ok ? Result.success("更新成功") : Result.error("更新失败");
     }
 }
