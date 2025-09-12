@@ -11,12 +11,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageDTO {
-    
+
     /**
-     * 聊天室ID
+     * 发起方为志愿者时：志愿者ID；为消费者时也需要传本人的志愿者ID或消费者ID
      */
-    private Long roomId;
-    
+    private Long volunteerUserId;
+
+    /**
+     * 对端的消费者ID（或本人的消费者ID），用于确定会话
+     */
+    private Long consumerUserId;
+
     /**
      * 发送者ID
      */

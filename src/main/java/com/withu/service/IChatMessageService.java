@@ -14,7 +14,7 @@ public interface IChatMessageService extends IService<ChatMessage> {
     /**
      * 发送消息
      */
-    ChatMessageVO sendMessage(Long roomId, Long senderId, Integer senderType, Integer messageType, String content);
+    ChatMessageVO sendMessage(Long volunteerUserId, Long consumerUserId, Long senderId, Integer senderType, Integer messageType, String content);
     
     /**
      * 获取用户的所有聊天记录
@@ -24,5 +24,5 @@ public interface IChatMessageService extends IService<ChatMessage> {
     /**
      * 获取聊天室的消息记录
      */
-    List<ChatMessageVO> getRoomChatMessages(Long roomId);
+    List<ChatMessageVO> getDialogMessages(Long volunteerUserId, Long consumerUserId);
 }

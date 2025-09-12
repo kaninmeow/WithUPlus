@@ -22,9 +22,14 @@ public class ChatMessageVO {
     private Long id;
     
     /**
-     * 聊天室ID
+     * 志愿者用户ID
      */
-    private Long roomId;
+    private Long volunteerUserId;
+
+    /**
+     * 消费者用户ID
+     */
+    private Long consumerUserId;
     
     /**
      * 发送者ID

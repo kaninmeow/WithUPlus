@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.withu.pojo.dto.ChatMessageDTO;
 import com.withu.pojo.vo.ChatMessageVO;
 import com.withu.service.IChatMessageService;
-import com.withu.service.IChatRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,6 @@ import org.springframework.web.socket.*;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,11 +23,9 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     @Autowired
     private IChatMessageService chatMessageService;
     
-    @Autowired
-    private IChatRoomService chatRoomService;
 
-    // 房间 -> (用户 -> 会话)
-    private static final ConcurrentHashMap<Long, ConcurrentHashMap<Long, WebSocketSession>> roomSessions = new ConcurrentHashMap<>();
+    // 会话键(志愿者ID-消费者ID) -> (用户ID -> 会话)
+    private static final ConcurrentHashMap<String, ConcurrentHashMap<Long, WebSocketSession>> dialogSessions = new ConcurrentHashMap<>();
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -37,10 +33,12 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         Long userId = (Long) session.getAttributes().get("userId");
-        Long roomId = (Long) session.getAttributes().get("roomId");
-        log.info("WebSocket连接建立: {}, userId={}, roomId={}", session.getId(), userId, roomId);
-        if (userId != null && roomId != null) {
-            roomSessions.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(userId, session);
+        Long volunteerUserId = (Long) session.getAttributes().get("volunteerUserId");
+        Long consumerUserId = (Long) session.getAttributes().get("consumerUserId");
+        log.info("WebSocket连接建立: {}, userId={}, volunteerId={}, consumerId={}", session.getId(), userId, volunteerUserId, consumerUserId);
+        if (userId != null && volunteerUserId != null && consumerUserId != null) {
+            String key = buildDialogKey(volunteerUserId, consumerUserId);
+            dialogSessions.computeIfAbsent(key, k -> new ConcurrentHashMap<>()).put(userId, session);
         }
     }
 
@@ -82,25 +80,35 @@ public class ChatWebSocketHandler implements WebSocketHandler {
      */
     private void handleChatMessage(WebSocketSession session, ChatMessageDTO messageDTO) {
         try {
-            // 保存消息到数据库
-            ChatMessageVO savedMessage = chatMessageService.sendMessage(
-                    messageDTO.getRoomId(),
-                    messageDTO.getSenderId(),
-                    messageDTO.getSenderType(),
-                    messageDTO.getMessageType(),
-                    messageDTO.getContent()
-            );
-            
-            // 确保当前会话已登记到房间
-            Long roomId = messageDTO.getRoomId();
+            Long volunteerUserId = messageDTO.getVolunteerUserId();
+            Long consumerUserId = messageDTO.getConsumerUserId();
             Long senderId = messageDTO.getSenderId();
-            if (roomId != null && senderId != null) {
-                roomSessions.computeIfAbsent(roomId, k -> new ConcurrentHashMap<>()).put(senderId, session);
+            Integer senderType = messageDTO.getSenderType();
+            Integer messageType = messageDTO.getMessageType();
+            String content = messageDTO.getContent();
+
+            if (volunteerUserId == null || consumerUserId == null || senderId == null || senderType == null) {
+                sendErrorMessage(session, "缺少必要参数");
+                return;
             }
 
-            // 广播消息给同房间其他用户
-            broadcastMessage(roomId, savedMessage, senderId);
-            
+            // 保存消息到数据库
+            ChatMessageVO savedMessage = chatMessageService.sendMessage(
+                    volunteerUserId,
+                    consumerUserId,
+                    senderId,
+                    senderType,
+                    messageType == null ? 1 : messageType,
+                    content
+            );
+
+            // 确保当前会话已登记到该对话
+            String key = buildDialogKey(volunteerUserId, consumerUserId);
+            dialogSessions.computeIfAbsent(key, k -> new ConcurrentHashMap<>()).put(senderId, session);
+
+            // 广播给对端
+            broadcastMessage(key, savedMessage, senderId);
+
         } catch (Exception e) {
             log.error("处理聊天消息失败: {}", e.getMessage());
             sendErrorMessage(session, "发送消息失败");
@@ -110,8 +118,8 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     /**
      * 广播消息
      */
-    private void broadcastMessage(Long roomId, ChatMessageVO message, Long senderId) {
-        ConcurrentHashMap<Long, WebSocketSession> sessions = roomSessions.get(roomId);
+    private void broadcastMessage(String dialogKey, ChatMessageVO message, Long senderId) {
+        ConcurrentHashMap<Long, WebSocketSession> sessions = dialogSessions.get(dialogKey);
         if (sessions == null) {
             return;
         }
@@ -146,16 +154,22 @@ public class ChatWebSocketHandler implements WebSocketHandler {
      * 移除用户会话
      */
     private void removeUserSession(WebSocketSession session) {
-        Long roomId = (Long) session.getAttributes().get("roomId");
+        Long volunteerUserId = (Long) session.getAttributes().get("volunteerUserId");
+        Long consumerUserId = (Long) session.getAttributes().get("consumerUserId");
         Long userId = (Long) session.getAttributes().get("userId");
-        if (roomId != null && userId != null) {
-            ConcurrentHashMap<Long, WebSocketSession> sessions = roomSessions.get(roomId);
+        if (volunteerUserId != null && consumerUserId != null && userId != null) {
+            String key = buildDialogKey(volunteerUserId, consumerUserId);
+            ConcurrentHashMap<Long, WebSocketSession> sessions = dialogSessions.get(key);
             if (sessions != null) {
                 sessions.remove(userId);
                 if (sessions.isEmpty()) {
-                    roomSessions.remove(roomId);
+                    dialogSessions.remove(key);
                 }
             }
         }
+    }
+
+    private String buildDialogKey(Long volunteerUserId, Long consumerUserId) {
+        return volunteerUserId + "-" + consumerUserId;
     }
 }

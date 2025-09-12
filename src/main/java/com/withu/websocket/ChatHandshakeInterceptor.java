@@ -23,10 +23,11 @@ public class ChatHandshakeInterceptor implements HandshakeInterceptor {
                 for (String p : params) {
                     String[] kv = p.split("=", 2);
                     if (kv.length == 2) {
-                        if ("userId".equals(kv[0])) {
-                            attributes.put("userId", Long.parseLong(kv[1]));
-                        } else if ("roomId".equals(kv[0])) {
-                            attributes.put("roomId", Long.parseLong(kv[1]));
+                        switch (kv[0]) {
+                            case "userId" -> attributes.put("userId", Long.parseLong(kv[1]));
+                            case "volunteerUserId" -> attributes.put("volunteerUserId", Long.parseLong(kv[1]));
+                            case "consumerUserId" -> attributes.put("consumerUserId", Long.parseLong(kv[1]));
+                            default -> {}
                         }
                     }
                 }

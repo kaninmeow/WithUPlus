@@ -17,9 +17,10 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatMessage> implements IChatMessageService {
 
     @Override
-    public ChatMessageVO sendMessage(Long roomId, Long senderId, Integer senderType, Integer messageType, String content) {
+    public ChatMessageVO sendMessage(Long volunteerUserId, Long consumerUserId, Long senderId, Integer senderType, Integer messageType, String content) {
         ChatMessage message = ChatMessage.builder()
-                .roomId(roomId)
+                .volunteerUserId(volunteerUserId)
+                .consumerUserId(consumerUserId)
                 .senderId(senderId)
                 .senderType(senderType)
                 .messageType(messageType)
@@ -46,10 +47,11 @@ public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatM
     }
 
     @Override
-    public List<ChatMessageVO> getRoomChatMessages(Long roomId) {
+    public List<ChatMessageVO> getDialogMessages(Long volunteerUserId, Long consumerUserId) {
         QueryWrapper<ChatMessage> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(ChatMessage::getRoomId, roomId)
+                .eq(ChatMessage::getVolunteerUserId, volunteerUserId)
+                .eq(ChatMessage::getConsumerUserId, consumerUserId)
                 .orderByAsc(ChatMessage::getCreateTime);
         
         List<ChatMessage> messages = this.list(queryWrapper);
