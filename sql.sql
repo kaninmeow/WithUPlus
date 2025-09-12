@@ -162,3 +162,12 @@ create table course_section (
                                 update_time     datetime not null default current_timestamp on update current_timestamp comment '修改时间',
                                 constraint fk_section_chapter foreign key (chapter_id) references course_chapter (id)
 ) comment = '课程内容_节表';
+
+create table advertisement (
+                               id              bigint auto_increment comment '主键id' primary key,
+                               ad_title        varchar(128) not null comment '广告标题',
+                               ad_desc         text comment '广告描述',
+                               ad_material     varchar(512) not null comment '广告素材（图片或视频的URL）',
+                               create_time     datetime not null default current_timestamp comment '创建时间',
+                               update_time     datetime not null default current_timestamp on update current_timestamp comment '修改时间'
+) comment = '广告表';
