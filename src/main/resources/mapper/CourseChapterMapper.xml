@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.withu.mapper.CourseChapterMapper">
+
+    <insert id="insertBatch">
+        insert into course_chapter (chapter_order, chapter_name, course_id, create_time, update_time)
+        values
+        <foreach collection="courseChapters" item="courseChapter" separator=",">
+            (#{courseChapter.chapterOrder}, #{courseChapter.chapterName}, #{courseChapter.courseId}, #{courseChapter.createTime}, #{courseChapter.updateTime})
+        </foreach>
+    </insert>
+</mapper>
+
+
