@@ -142,7 +142,7 @@ public class ConsumerUserController {
     @ApiOperation("根据地址id更新地址")
     public Result<String> updateAddressById(@RequestBody Address address) {
         log.info("根据地址id更新地址：{}",address);
-        if(iConsumerUserService.updateAddressById(address)){
+        if(iConsumerUserService.updateAddressById(address) > 0){
             return Result.success("更新成功");
         }else {
             return Result.error("更新失败");
@@ -218,7 +218,7 @@ public class ConsumerUserController {
     @ApiOperation("更新老人信息")
     public Result<String> updateElderById(@RequestBody Elder elder) {
         log.info("更新老人信息：{}", elder);
-        if (iConsumerUserService.updateElderById(elder)) {
+        if (iConsumerUserService.updateElderById(elder) > 0) {
             return Result.success("更新成功");
         } else {
             return Result.error("更新失败");

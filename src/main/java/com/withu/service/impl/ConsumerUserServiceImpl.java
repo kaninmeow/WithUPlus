@@ -1,5 +1,7 @@
 package com.withu.service.impl;
 
+import com.withu.mapper.AddressMapper;
+import com.withu.mapper.ElderMapper;
 import com.withu.pojo.entity.Address;
 import com.withu.pojo.entity.ConsumerUser;
 import com.withu.mapper.ConsumerUserMapper;
@@ -26,6 +28,12 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
 
     @Autowired
     private ConsumerUserMapper consumerUserMapper;
+
+    @Autowired
+    private AddressMapper addressMapper;
+
+    @Autowired
+    private ElderMapper elderMapper;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -88,12 +96,8 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
     }
 
     @Override
-    public boolean updateAddressById(Address address) {
-        if (findAddressById(address.getId()) == null) {
-            throw new BusinessException("地址不存在");
-        }
-        removeAddressById(address.getId());
-        return saveAddress(address);
+    public int updateAddressById(Address address) {
+        return addressMapper.updateById(address);
     }
 
     @Override
@@ -155,7 +159,7 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
     }
 
     @Override
-    public boolean updateElderById(Elder elder) {
+    public int updateElderById(Elder elder) {
         if (elder == null) {
             throw new BusinessException("老人信息不能为空");
         }
@@ -167,7 +171,7 @@ public class ConsumerUserServiceImpl extends ServiceImpl<ConsumerUserMapper, Con
         if (existingElder == null) {
             throw new BusinessException("老人信息不存在");
         }
-        return consumerUserMapper.updateElderById(elder);
+        return elderMapper.updateById(elder);
     }
 
     @Override

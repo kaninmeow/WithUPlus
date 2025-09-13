@@ -27,11 +27,8 @@ public class OrderController {
      * @param order
      * @return
      */
-    //ToDo 需要删除IgnoreAuth注解
-    //ToDo 有bug
     @PostMapping("createOrder")
     @ApiOperation("创建订单")
-    @IgnoreAuth
     public Result<String> createOrder(@RequestBody Order order) {
         log.info("创建订单：{}",order);
         if(iOrderService.saveOrder(order)){
@@ -47,7 +44,6 @@ public class OrderController {
      */
     @PutMapping("cancelOrder")
     @ApiOperation("取消订单")
-    @IgnoreAuth
     public Result<String>      cancelOrder(@PathVariable Long id) {
         log.info("取消订单：{}",id);
         if(iOrderService.cancelOrder(id)){
@@ -77,7 +73,6 @@ public class OrderController {
      */
     @PostMapping("grabOrder")
     @ApiOperation("志愿者抢单")
-    @IgnoreAuth
     public Result<String> grabOrder(@RequestParam Long orderId, @RequestParam Long volunteerUserId) {
         log.info("志愿者抢单：订单ID={}, 志愿者ID={}", orderId, volunteerUserId);
         try {

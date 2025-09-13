@@ -32,7 +32,7 @@ public interface IConsumerUserService extends IService<ConsumerUser> {
 
     boolean removeAddressById(Long id);
 
-    boolean updateAddressById(Address address);
+    int updateAddressById(Address address);
 
     /**
      * 获取该普通消费者用户所有待接单的订单
@@ -78,10 +78,11 @@ public interface IConsumerUserService extends IService<ConsumerUser> {
 
     /**
      * 更新老人信息
+     *
      * @param elder 老人信息
      * @return 更新结果
      */
-    boolean updateElderById(Elder elder);
+    int updateElderById(Elder elder);
 
     /**
      * 根据订单ID获取志愿者电话
