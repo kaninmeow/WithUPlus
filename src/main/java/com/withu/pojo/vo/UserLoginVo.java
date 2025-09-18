@@ -15,10 +15,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ApiModel(description = "用户登录返回的数据格式")
 public class UserLoginVo implements Serializable {
-
     @ApiModelProperty(value = "用户登录token")
     private String token;
-
     @ApiModelProperty(value = "主键")
     private Integer id;
 

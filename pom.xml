@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.1</version>
+			<version>2.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun.oss</groupId>
@@ -150,6 +150,8 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- 必须指定版本号 -->
+				<version>2.7.10</version> <!-- 可根据你的 Spring Boot 版本调整 -->
 				<configuration>
 					<excludes>
 						<exclude>

@@ -14,13 +14,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginDto implements Serializable {
-
     @ApiModelProperty("用户名")
     private String username;
-
     @ApiModelProperty("密码")
     private String password;
-
     @ApiModelProperty("用户类型")
     private Integer type;
 

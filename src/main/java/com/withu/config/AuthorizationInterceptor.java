@@ -31,9 +31,7 @@ import java.math.BigInteger;
  */
 @Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
-
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationInterceptor.class);
-
     public static final String LOGIN_TOKEN_KEY = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String[] ALLOWED_HEADERS = {

@@ -8,4 +8,6 @@ public interface UserService {
 
 
     void changePassword(User user);
+
+    boolean checkType(UserLoginDto userLoginDTO);
 }

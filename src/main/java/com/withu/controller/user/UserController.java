@@ -1,6 +1,4 @@
 package com.withu.controller.user;
-
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.withu.annotation.IgnoreAuth;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-
 @Slf4j
 @Api("User")
 @RestController
@@ -59,9 +56,19 @@ public class UserController {
     @IgnoreAuth
     public Result<UserLoginVo> login(@RequestBody UserLoginDto userLoginDTO) {
         log.info("员工登录：{}", userLoginDTO);
-
+        boolean b = userService.checkType(userLoginDTO);
+        if (b){
+            System.out.println("bbb");
+        }else {
+            return Result.error("用户类型错误");
+        }
         if (userLoginDTO.getType() == 0 || userLoginDTO.getType() == 1 || userLoginDTO.getType() == 2) {
             User user = userService.login(userLoginDTO);
+            if (user!=null) {
+                System.out.println("bb");
+            }else {
+                return Result.error("账号或密码错误");
+            }
 
             //登录成功后，生成jwt令牌
             Map<String, Object> claims = new HashMap<>();
@@ -70,20 +77,17 @@ public class UserController {
                     jwtProperties.getAdminSecretKey(),
                     jwtProperties.getAdminTtl(),
                     claims);
-
             UserLoginVo userLoginVo = UserLoginVo.builder()
                     .id(user.getId())
                     .username(user.getUsername())
                     .name(user.getName())
                     .token(token)
                     .build();
-
             return Result.success("登录成功",userLoginVo);
         }else {
             throw new BusinessException("用户类型错误");
         }
     }
-
     /**
      * 注册
      * @param user

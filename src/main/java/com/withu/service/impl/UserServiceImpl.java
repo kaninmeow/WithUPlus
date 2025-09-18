@@ -30,59 +30,22 @@ public class UserServiceImpl  implements UserService {
         String username = userLoginDTO.getUsername();
         String password = userLoginDTO.getPassword();
         //判断用户类型
-        if (Objects.equals(userLoginDTO.getType(), UserTypeConstant.CONSUMER)) {
+
             User user = userMapper.getConsumerByUsername(username);
             //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
             if (user == null) {
                 //账号不存在
-                throw new BusinessException("账号不存在，请注册");
+                return null;
             }
-
             //密码比对
             //对密码进行Md5加密处理
             password = DigestUtils.md5DigestAsHex(password.getBytes());
             if (!password.equals(user.getPassword())) {
                 //密码错误
-                throw new BusinessException("密码错误请重新尝试");
+               return null;
             }
             //3、返回实体对象
             return user;
-
-        } else if (Objects.equals(userLoginDTO.getType(), UserTypeConstant.VOLUNTEER)) {
-            //志愿者用户登录
-            User user = userMapper.getvolunteerByUsername(username);
-            if (user == null) {
-                //账号不存在
-                throw new BusinessException("账号不存在，请注册");
-            }
-            //密码比对
-            //对密码进行Md5加密处理
-            password = DigestUtils.md5DigestAsHex(password.getBytes());
-            if (!password.equals(user.getPassword())) {
-                //密码错误
-                throw new BusinessException("密码错误请重新尝试");
-            }
-            return user;
-        } else if(Objects.equals(userLoginDTO.getType(), UserTypeConstant.ADMIN)) {
-            //管理员用户登录
-            User user = userMapper.getAdminByUsername(username);
-            if (user == null) {
-                //账号不存在
-                throw new BusinessException("账号不存在，请注册");
-            }
-            //密码比对
-            //对密码进行Md5加密处理
-            password = DigestUtils.md5DigestAsHex(password.getBytes());
-            if (!password.equals(user.getPassword())) {
-                //密码错误
-                throw new BusinessException("密码错误请重新尝试");
-            }
-            return user;
-        } else {
-            throw new BusinessException("用户类型错误");
-        }
-
-
     }
 
     @Override
@@ -96,5 +59,13 @@ public class UserServiceImpl  implements UserService {
         } else {
             throw new BusinessException("原密码错误");
         }
+    }
+
+    @Override
+    public boolean checkType(UserLoginDto userLoginDTO) {
+        if (Objects.equals(userLoginDTO.getType(), UserTypeConstant.CONSUMER)) {
+            return true;
+        }
+        return false;
     }
 }
