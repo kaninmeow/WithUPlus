@@ -57,11 +57,6 @@ public class UserController {
     public Result<UserLoginVo> login(@RequestBody UserLoginDto userLoginDTO) {
         log.info("员工登录：{}", userLoginDTO);
         boolean b = userService.checkType(userLoginDTO);
-        if (b){
-            System.out.println("bbb");
-        }else {
-            return Result.error("用户类型错误");
-        }
         if (userLoginDTO.getType() == 0 || userLoginDTO.getType() == 1 || userLoginDTO.getType() == 2) {
             User user = userService.login(userLoginDTO);
             if (user!=null) {
@@ -85,7 +80,7 @@ public class UserController {
                     .build();
             return Result.success("登录成功",userLoginVo);
         }else {
-            throw new BusinessException("用户类型错误");
+            return Result.error("用户类型错误");
         }
     }
     /**

@@ -22,8 +22,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/volunteer-user")
 public class VolunteerUserController {
+
     @Autowired
     IVolunteerUserService iVolunteerUserService;
+
     @PostMapping("/update")
     @ApiOperation("志愿者用户信息更新")
     public Result<String> update(@RequestBody VolunteerUser volunteerUser) {

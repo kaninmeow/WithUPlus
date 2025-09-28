@@ -60,7 +60,6 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             response.setStatus(HttpStatus.NO_CONTENT.value());
             return false;
         }
-
         // 检查是否需要跳过认证
         if (shouldSkipAuth(handler)) {
             return true;
