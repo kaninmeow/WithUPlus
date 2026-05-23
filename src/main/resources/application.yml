@@ -20,13 +20,13 @@ withu:
 
     alioss:
       endpoint: oss-cn-beijing.aliyuncs.com
-      access-key-id: LTAI5t7K3NXYDmzPhgtECfef
-      access-key-secret: TPKQBuCMtDmsYI2OJV54emHB17l3P9
+      access-key-id: 
+      access-key-secret: 
       bucket-name: with-u
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://39.106.134.229:3306/withuplus?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/withuplus?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     username: admin
     password: admin123
 
