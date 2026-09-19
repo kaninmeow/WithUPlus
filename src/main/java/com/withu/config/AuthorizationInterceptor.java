@@ -117,8 +117,11 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        // 判断请求来源，选择对应的 secretKey
+        String secretKey = resolveSecretKey(request);
+
         try {
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
+            Claims claims = JwtUtil.parseJWT(secretKey, token);
             if (claims == null) {
                 sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "无效的Token");
                 return false;
@@ -144,12 +147,46 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         }
     }
 
-    private String extractToken(HttpServletRequest request) {
-        String token = request.getHeader(LOGIN_TOKEN_KEY);
-        if (token != null && token.startsWith(TOKEN_PREFIX)) {
-            return token.substring(TOKEN_PREFIX.length());
+    /**
+     * 根据请求头名称判断使用哪个 secretKey
+     */
+    private String resolveSecretKey(HttpServletRequest request) {
+        // 如果请求中包含 userTokenName 头，则使用 userSecretKey
+        if (jwtProperties.getUserTokenName() != null
+                && request.getHeader(jwtProperties.getUserTokenName()) != null) {
+            return jwtProperties.getUserSecretKey();
         }
-        return token;
+        // 默认使用 adminSecretKey
+        return jwtProperties.getAdminSecretKey();
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        // 优先从 Authorization 头读取
+        String token = request.getHeader(LOGIN_TOKEN_KEY);
+        if (token != null && !token.isEmpty()) {
+            if (token.startsWith(TOKEN_PREFIX)) {
+                return token.substring(TOKEN_PREFIX.length());
+            }
+            return token;
+        }
+
+        // 尝试从配置的 admin-token-name 头读取
+        if (jwtProperties.getAdminTokenName() != null) {
+            token = request.getHeader(jwtProperties.getAdminTokenName());
+            if (token != null && !token.isEmpty()) {
+                return token;
+            }
+        }
+
+        // 尝试从配置的 user-token-name 头读取
+        if (jwtProperties.getUserTokenName() != null) {
+            token = request.getHeader(jwtProperties.getUserTokenName());
+            if (token != null && !token.isEmpty()) {
+                return token;
+            }
+        }
+
+        return null;
     }
 
     private void sendErrorResponse(HttpServletResponse response,
